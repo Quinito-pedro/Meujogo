@@ -3,20 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jogo de Aprendizado - Português ⇄ Inglês</title>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#00c3ff" />
-
+  <title>Inglês Pro - Glass Edition</title>
+  
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(-45deg, #4b6cb7, #182848, #00c3ff, #1a2a6c);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1a2a6c);
     background-size: 400% 400%;
-    animation: gradientBG 12s ease infinite;
+    animation: gradientBG 15s ease infinite;
     color: white;
     text-align: center;
     padding: 20px;
     margin: 0;
+    min-height: 100vh;
   }
 
   @keyframes gradientBG {
@@ -24,733 +23,314 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
-.options {
-  display: flex;
-  flex-wrap: wrap;       /* permite quebrar linha das opções */
-  gap: 8px;              /* espaço entre os botões */
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.options button {
-  flex: 1 1 45%;         /* cada botão ocupa cerca de 45% da largura (2 por linha) */
-  min-width: 120px;      /* largura mínima para não ficar muito pequeno */
-  padding: 10px;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-  
-  .palavra-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.palavra-container h2 {
-  font-size: 1.8rem;
-  margin: 0;
-}
-
-.btn-ouvir {
-  padding: 8px 12px;
-  font-size: 1rem;
-  background-color: #ffc107;
-  border: none;
-  border-radius: 5px;
-  color: black;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.btn-ouvir:hover {
-  transform: scale(1.05);
-}
-.btn-ouvir:active {
-  transform: scale(0.95);
-}
-
-
-.btn-ouvir:active {
-  transform: scale(0.95);
-}
-
-
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
 
   .game-box {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 400px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 420px;
     margin: auto;
-    box-shadow: 0 0 20px rgba(0, 195, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   }
 
+  /* MODAL DE RESULTADOS (MENU DE RESPOSTAS) */
+  #modalResultados {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 400px;
+    background: rgba(15, 32, 39, 0.98);
+    border: 2px solid #00c3ff;
+    border-radius: 25px;
+    padding: 25px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.9);
+  }
+
+  .resumo-lista {
+    text-align: left;
+    max-height: 250px;
+    overflow-y: auto;
+    margin: 15px 0;
+    padding: 15px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  /* BOTÕES ORIGINAIS */
   button {
-    padding: 10px;
+    padding: 12px;
     font-size: 1rem;
     cursor: pointer;
     background-color: #00c3ff;
-    border: none;
-    border-radius: 5px;
     color: white;
-    margin: 5px;
+    margin: 8px;
     width: 100%;
-    max-width: 250px;
-    transition: transform 0.2s ease;
-  }
-
-  button:hover {
-    transform: scale(1.05);
-  }
-
-  button:active {
-    transform: scale(0.95);
-  }
-
-  .feedback {
-    margin-top: 20px;
-    font-size: 1.2rem;
-  }
-
-  .score, .level {
-    margin-top: 15px;
-    font-size: 1.2rem;
+    max-width: 260px;
     font-weight: bold;
-    padding: 10px 15px;
-    background: rgba(0, 195, 255, 0.2);
-    border: 2px solid #00c3ff;
-    border-radius: 10px;
-    display: inline-block;
-    color: #fff;
-    box-shadow: 0 0 10px #00c3ff88;
-    transition: all 0.3s ease;
+    border: none;
+    border-bottom: 4px solid #0099cc;
+    border-radius: 12px;
+    transition: all 0.1s ease;
   }
 
-  .score:hover, .level:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px #00c3ff;
+  button:active { border-bottom: 0; transform: translateY(4px); }
+  
+  .btn-proximo { background-color: #2ecc71; border-bottom-color: #27ae60; margin-top: 15px; }
+
+  .btn-dica {
+    background: transparent !important; color: #ffc107 !important;
+    border: 2px dashed #ffc107 !important; border-bottom: 2px dashed #ffc107 !important;
   }
 
-  .options {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-
-  @media (min-width: 600px) {
-    h1 {
-      font-size: 2.5rem;
-    }
-
-    button {
-      width: auto;
-    }
-
-    .options {
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .options button {
-      width: 150px;
-    }
-  }
-
-  /* Animações de acerto e erro */
-  body.flash-correct {
-    animation: flashGreen 0.5s ease-in-out;
-  }
-  body.flash-error {
-    animation: flashRed 0.5s ease-in-out;
-  }
-
-  @keyframes flashGreen {
-    0% { background-color: #d4edda; }
-    100% { background-color: transparent; }
-  }
-
-  @keyframes flashRed {
-    0% { background-color: #f8d7da; }
-    100% { background-color: transparent; }
-  }
-
-  /* Animação de vibração leve para erro */
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-5px); }
-    40%, 80% { transform: translateX(5px); }
-  }
-
-  .shake {
-    animation: shake 0.3s;
-  }
-
-  /* Efeito de brilho para passar de nível */
-  .nivel-brilho {
-    animation: brilho 1s ease-in-out;
-  }
-
-  @keyframes brilho {
-    0% { color: gold; text-shadow: 0 0 10px gold; }
-    100% { color: inherit; text-shadow: none; }
-  }
-
-  /* Fade-in para Game Over e resumo */
-  .fade-in {
-    animation: fadeIn 0.5s ease-in;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
+  .moedas-container { color: #ffd700; font-weight: bold; margin-bottom: 10px; }
+  input[type="text"] { padding: 12px; width: 80%; border-radius: 10px; border: none; margin: 10px 0; text-align: center; font-size: 1rem; }
+  .feedback { margin-top: 10px; font-weight: bold; min-height: 1.5em; }
+  
+  .shake { animation: shake 0.4s; }
+  @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-8px);} 75% {transform: translateX(8px);} }
 </style>
-
 </head>
 <body>
 
-  <h1>🧠 A.I.Jogando!</h1>
-  <div id="mapaNiveis" style="margin-bottom: 20px;"></div>
-  <div class="game-box">
-    <div class="vidas" id="vidas">Vidas: ❤️❤️❤️</div>
-    <p id="instrucoes">Traduza de <strong>Português</strong> para <strong>Inglês</strong>:</p>
+  <h1>LEARN ENGLISH</h1>
+  
+  <div id="mapaNiveis" style="margin-bottom: 20px; font-size: 1.2rem;"></div>
+  
+  <div class="game-box" id="gameBox">
+    <div class="moedas-container" id="moedasDisplay">🪙 Moedas: 5</div>
+    <div class="vidas" id="vidasDisplay">❤️ ❤️ ❤️</div>
+    
     <div class="palavra-container">
-      <div class="palavra-container" id="palavraContainer">
-  <h2 id="word">...</h2>
-  <button class="btn-ouvir" onclick="falarPalavra()">🔊 Ouvir</button>
-</div>
+      <h2 id="wordDisplay">...</h2>
+      <button style="width:auto; background:#ffc107; color:#333; border-bottom-color:#c79400;" onclick="falarPalavra()">🔊 Ouvir</button>
     </div>
-    <div class="options" id="options"></div>
-    <div class="feedback" id="feedback"></div>
-    <div class="score" id="score">Pontuação: 0</div>
-    <div class="level" id="level">Nível: 1</div>
-    <button onclick="resetarJogo()">🔄 Resetar Jogo</button>
+
+    <div class="options" id="optionsContainer"></div>
+    <div class="feedback" id="feedbackDisplay"></div>
+    
+    <div class="score" id="scoreDisplay">Pontos: 0</div>
+    <div class="level" id="levelDisplay">Nível: 1</div>
+
+    <button class="btn-dica" id="btnDica" onclick="revelarResposta()">💡 Resposta Automática (3 🪙)</button>
+    <br>
+    <button onclick="resetarJogo()" style="background:none; border:none; color:#ff6b6b; text-decoration:underline; font-size:0.8rem; cursor:pointer;">Reiniciar Tudo</button>
+  </div>
+
+  <div id="modalResultados">
+    <h2 style="color: #2ecc71;">Nível Concluído!</h2>
+    <div class="resumo-lista" id="resumoConteudo"></div>
+    <p id="infoFaltam" style="font-weight: bold;"></p>
+    <button class="btn-proximo" onclick="irParaProximoNivel()">Ir para o Próximo Nível ➔</button>
   </div>
 
   <script>
-    let nivelConcluido = parseInt(localStorage.getItem("nivelConcluido")) || 1;
-    let acertosNivel = [];
-let errosNivel = [];
-let palavrasRestantes = [];
-const somAcerto = new Audio("acerto.mp3");
-const somErro = new Audio("erro.mp3");
-const somVitoria = new Audio("vitoria.mp3");
-
+    // --- TODOS OS SEUS NÍVEIS ORIGINAIS ---
     const nivel1 = [ { pt: "casa", en: "house" }, { pt: "gato", en: "cat" }, { pt: "livro", en: "book" }, { pt: "maçã", en: "apple" }, { pt: "carro", en: "car" }, { pt: "sol", en: "sun" }, { pt: "água", en: "water" }, { pt: "mesa", en: "table" }];
     const nivel2 = [ { pt: "janela", en: "window" }, { pt: "cachorro", en: "dog" }, { pt: "telefone", en: "phone" }, { pt: "estrada", en: "road" }, { pt: "caneta", en: "pen" }, { pt: "verde", en: "green" }, { pt: "fruta", en: "fruit" }, { pt: "noite", en: "night" }];
     const nivel3 = [ { pt: "conhecimento", en: "knowledge" }, { pt: "pensamento", en: "thought" }, { pt: "esperança", en: "hope" }, { pt: "desafio", en: "challenge" }, { pt: "compreensão", en: "understanding" }, { pt: "liberdade", en: "freedom" }, { pt: "decisão", en: "decision" }, { pt: "melhoria", en: "improvement" }];
-    const todasPalavras = [...nivel1, ...nivel2, ...nivel3];
-
     const nivel5 = [
       { dialogo: "A: Hi! How are you?\nB: _____", correta: "I'm fine, thank you." },
       { dialogo: "A: What is your name?\nB: _____", correta: "My name is Anna." },
       { dialogo: "A: Do you speak English?\nB: _____", correta: "Yes, a little." },
       { dialogo: "A: Where are you from?\nB: _____", correta: "I'm from Brazil." }
     ];
-
     const nivel6 = [
       { pergunta: "A: What time is it?\nB: _____", resposta: "It is three o'clock" },
       { pergunta: "A: How old are you?\nB: _____", resposta: "I am 25 years old" },
       { pergunta: "A: What do you do?\nB: _____", resposta: "I am a student" }
     ];
-    const nivel7 = [
-  { pt: "trabalho", en: "work" },
-  { pt: "dinheiro", en: "money" },
-  { pt: "escola", en: "school" },
-  { pt: "alimento", en: "food" },
-  { pt: "amigo", en: "friend" },
-  { pt: "cidade", en: "city" },
-  { pt: "viagem", en: "travel" },
-  { pt: "cultura", en: "culture" }
-];
-const nivel8 = [
-  { pt: "felicidade", en: "happiness" },
-  { pt: "tristeza", en: "sadness" },
-  { pt: "amor", en: "love" },
-  { pt: "medo", en: "fear" },
-  { pt: "coragem", en: "courage" },
-  { pt: "raiva", en: "anger" },
-  { pt: "paz", en: "peace" },
-  { pt: "respeito", en: "respect" }
-];
-const nivel9 = [
-  { pergunta: "A: Can you help me?\nB: _____", resposta: "Yes, of course." },
-  { pergunta: "A: Where is the bank?\nB: _____", resposta: "It is on Main Street." },
-  { pergunta: "A: What is your favorite food?\nB: _____", resposta: "I love pizza." }
-];
-const nivel10 = [
-  { dialogo: "A: What are you doing tomorrow?\nB: _____", correta: "I'm going to the beach." },
-  { dialogo: "A: Have you been to Paris?\nB: _____", correta: "Yes, once." },
-  { dialogo: "A: Do you like music?\nB: _____", correta: "Yes, very much." }
-];
-const niveis = {
-  1: nivel1,
-  2: nivel2,
-  3: nivel3,
-  4: todasPalavras,
-  5: nivel5,
-  6: nivel6,
-  7: nivel7,
-  8: nivel8,
-  9: nivel9,
-  10: nivel10
-};
-    let pontuacao = parseInt(localStorage.getItem("pontuacao")) || 0;
-    let vidas = parseInt(localStorage.getItem("vidas")) || 3;
+    const nivel7 = [{ pt: "trabalho", en: "work" }, { pt: "dinheiro", en: "money" }, { pt: "escola", en: "school" }, { pt: "alimento", en: "food" }, { pt: "amigo", en: "friend" }, { pt: "cidade", en: "city" }, { pt: "viagem", en: "travel" }, { pt: "cultura", en: "culture" }];
+    const nivel8 = [{ pt: "felicidade", en: "happiness" }, { pt: "tristeza", en: "sadness" }, { pt: "amor", en: "love" }, { pt: "medo", en: "fear" }, { pt: "coragem", en: "courage" }, { pt: "raiva", en: "anger" }, { pt: "paz", en: "peace" }, { pt: "respeito", en: "respect" }];
+    const nivel9 = [
+      { pergunta: "A: Can you help me?\nB: _____", resposta: "Yes, of course." },
+      { pergunta: "A: Where is the bank?\nB: _____", resposta: "It is on Main Street." },
+      { pergunta: "A: What is your favorite food?\nB: _____", resposta: "I love pizza." }
+    ];
+    const nivel10 = [
+      { dialogo: "A: What are you doing tomorrow?\nB: _____", correta: "I'm going to the beach." },
+      { dialogo: "A: Have you been to Paris?\nB: _____", correta: "Yes, once." },
+      { dialogo: "A: Do you like music?\nB: _____", correta: "Yes, very much." }
+    ];
 
-function atualizarVidas() {
-  const coracoes = "❤️".repeat(vidas) + "🤍".repeat(3 - vidas);
-  document.getElementById("vidas").textContent = `Vidas: ${coracoes}`;
-  localStorage.setItem("vidas", vidas);
-}
+    const niveis = { 1: nivel1, 2: nivel2, 3: nivel3, 4: [...nivel1, ...nivel2], 5: nivel5, 6: nivel6, 7: nivel7, 8: nivel8, 9: nivel9, 10: nivel10 };
+
+    // --- ESTADO DO JOGO ---
+    let moedas = parseInt(localStorage.getItem("moedas")) || 5;
     let nivel = parseInt(localStorage.getItem("nivel")) || 1;
+    let pontuacao = parseInt(localStorage.getItem("pontuacao")) || 0;
+    let vidas = 3;
+    let palavrasRestantes = [];
     let palavraAtual;
+    let historicoNivel = []; 
 
-    function atualizarNivel() {
-  localStorage.setItem("nivel", nivel);
-  const nivelEl = document.getElementById("level");
-  nivelEl.textContent = `Nível: ${nivel}`;
-  nivelEl.classList.add("nivel-brilho");
-  setTimeout(() => nivelEl.classList.remove("nivel-brilho"), 1000);
-
-  atualizarMapaDeNiveis();
-}
-
-  function atualizarMapaDeNiveis() {
-  const totalNiveis = 10;
-  const container = document.getElementById("mapaNiveis");
-  container.innerHTML = "";
-
-  for (let i = 1; i <= totalNiveis; i++) {
-    const span = document.createElement("span");
-    span.textContent = i === nivel ? "🟢" : (i < nivel ? "✅" : "🔒");
-    span.style.margin = "0 5px";
-    container.appendChild(span);
-  }
-}
-    function falarPalavra() {
-      const palavra = palavraAtual?.exibir || palavraAtual?.dialogo || palavraAtual?.pergunta || "";
-      const lang = /^[a-zA-Z]+$/.test(palavra) ? "en-US" : "pt-PT";
-      const utterance = new SpeechSynthesisUtterance(palavra);
-      utterance.lang = lang;
-      speechSynthesis.speak(utterance);
+    function atualizarInterface() {
+      document.getElementById("moedasDisplay").textContent = `🪙 Moedas: ${moedas}`;
+      document.getElementById("scoreDisplay").textContent = `Pontos: ${pontuacao}`;
+      document.getElementById("levelDisplay").textContent = `Nível: ${nivel}`;
+      document.getElementById("vidasDisplay").textContent = "❤️ ".repeat(vidas) + "🤍 ".repeat(3-vidas);
+      document.getElementById("btnDica").disabled = (moedas < 3);
+      
+      const mapa = document.getElementById("mapaNiveis");
+      mapa.innerHTML = Array.from({length: 10}, (_, i) => (i+1 === nivel ? "🟢" : (i+1 < nivel ? "✅" : "🔒"))).join(" ");
+      
+      localStorage.setItem("moedas", moedas);
+      localStorage.setItem("nivel", nivel);
+      localStorage.setItem("pontuacao", pontuacao);
     }
 
-   function novaPalavra() {
-  atualizarNivel();
-  const lista = niveis[nivel];
-  palavrasRestantes = palavrasRestantes.length ? palavrasRestantes : [...lista];
+    function novaPalavra() {
+      const lista = niveis[nivel] || nivel1;
+      if (palavrasRestantes.length === 0) {
+        palavrasRestantes = [...lista];
+        historicoNivel = [];
+      }
 
-  if (palavrasRestantes.length === 0) {
-    mostrarResumoNivel();
-    return;
-  }
-
-  palavraAtual = palavrasRestantes.splice(Math.floor(Math.random() * palavrasRestantes.length), 1)[0];
-  document.getElementById("feedback").textContent = "";
-  document.getElementById("options").innerHTML = "";
-  document.getElementById("answerBox")?.remove();
-
-  const palavraContainer = document.getElementById("palavraContainer");
-  const wordElement = document.getElementById("word");
-
-  // Nível 5 e 10: Diálogo com múltiplas opções
-  if (nivel === 5 || nivel === 10) {
-    palavraAtual.exibir = palavraAtual.dialogo;
-    wordElement.textContent = palavraAtual.exibir;
-    palavraContainer.style.display = "flex";
-    gerarDialogoOpcoes();
-    return;
-  }
-
-  // Nível 6 e 9: Pergunta com input manual
-  if (nivel === 6 || nivel === 9) {
-    palavraAtual.exibir = palavraAtual.pergunta;
-    wordElement.textContent = palavraAtual.exibir;
-    palavraContainer.style.display = "flex";
-    gerarInputManual(true);
-    return;
-  }
-
-  // Nível 1: mostrar em pt → opções em en
-  if (nivel === 1) {
-    palavraAtual.exibir = palavraAtual.pt;
-    palavraAtual.esperada = palavraAtual.en;
-    wordElement.textContent = palavraAtual.exibir;
-    palavraContainer.style.display = "flex";
-    gerarOpcoes(lista, "en");
-    return;
-  }
-
-  // Nível 2: mostrar em en → opções em pt
-  if (nivel === 2) {
-    palavraAtual.exibir = palavraAtual.en;
-    palavraAtual.esperada = palavraAtual.pt;
-    wordElement.textContent = palavraAtual.exibir;
-    palavraContainer.style.display = "flex";
-    gerarOpcoes(lista, "pt");
-    return;
-  }
-
-  // Nível 3: alternar exibição pt/en e opções en/pt
-  if (nivel === 3) {
-    const indexPar = (acertosNivel.length + errosNivel.length) % 2 === 0;
-    palavraAtual.exibir = indexPar ? palavraAtual.pt : palavraAtual.en;
-    palavraAtual.esperada = indexPar ? palavraAtual.en : palavraAtual.pt;
-    const idiomaOpcoes = indexPar ? "en" : "pt";
-
-    wordElement.textContent = palavraAtual.exibir;
-    palavraContainer.style.display = "flex";
-    gerarOpcoes(lista, idiomaOpcoes);
-    return;
-  }
-
-  // Nível 4, 7, 8: aleatório pt/en com input ou opções
-  const mostrar = Math.random() < 0.5 ? "pt" : "en";
-  palavraAtual.exibir = palavraAtual[mostrar];
-  palavraAtual.esperada = mostrar === "pt" ? palavraAtual.en : palavraAtual.pt;
-
-  wordElement.textContent = palavraAtual.exibir;
-  palavraContainer.style.display = "flex";
-
-  if (nivel === 7 || nivel === 8) {
-    gerarOpcoes(lista, mostrar === "pt" ? "en" : "pt");
-  } else {
-    gerarInputManual(false);
-  }
-}
+      palavraAtual = palavrasRestantes.splice(Math.floor(Math.random() * palavrasRestantes.length), 1)[0];
+      document.getElementById("feedbackDisplay").textContent = "";
+      document.getElementById("optionsContainer").innerHTML = "";
+      document.getElementById("btnDica").style.display = "block";
+      
+      // LOGICA DOS NIVEIS ORIGINAIS
+      if (nivel === 5 || nivel === 10) {
+        document.getElementById("wordDisplay").textContent = palavraAtual.dialogo;
+        palavraAtual.esperada = palavraAtual.correta;
+        gerarDialogoOpcoes();
+      } else if (nivel === 6 || nivel === 9) {
+        document.getElementById("wordDisplay").textContent = palavraAtual.pergunta;
+        palavraAtual.esperada = palavraAtual.resposta;
+        gerarInputManual();
+      } else {
+        let mostrar = (nivel === 2) ? "en" : "pt";
+        if (nivel === 3) mostrar = Math.random() > 0.5 ? "en" : "pt";
+        document.getElementById("wordDisplay").textContent = palavraAtual[mostrar] || palavraAtual.pt;
+        palavraAtual.esperada = (mostrar === "pt") ? palavraAtual.en : (palavraAtual.pt || palavraAtual.en);
+        
+        if (nivel === 4) gerarInputManual();
+        else gerarOpcoes(lista, (mostrar === "pt" ? "en" : "pt"));
+      }
+      atualizarInterface();
+    }
 
     function gerarOpcoes(lista, idiomaOpcao) {
-  const container = document.getElementById("options");
-  container.innerHTML = "";
-  container.style.display = "flex";
-
-  let opcoes = new Set([palavraAtual.esperada]);
-
-  while (opcoes.size < 4) {
-    const aleatorio = lista[Math.floor(Math.random() * lista.length)];
-    if (aleatorio && aleatorio[idiomaOpcao]) {
-      opcoes.add(aleatorio[idiomaOpcao]);
-    }
-  }
-
-  Array.from(opcoes)
-    .sort(() => Math.random() - 0.5)
-    .forEach(opcao => {
-      const btn = document.createElement("button");
-      btn.textContent = opcao;
-      btn.onclick = () => verificarResposta(opcao);
-      container.appendChild(btn);
-    });
-}
-    function gerarDialogoOpcoes() {
-      const container = document.getElementById("options");
-      container.innerHTML = "";
-      document.getElementById("answerBox")?.remove();
-      container.style.display = "flex";
-
-      const opcoes = [
-        palavraAtual.correta,
-        "I don't know.",
-        "See you later.",
-        "Nice to meet you."
-      ].sort(() => Math.random() - 0.5);
-
-      opcoes.forEach(opcao => {
+      const container = document.getElementById("optionsContainer");
+      let opcoes = new Set([palavraAtual.esperada]);
+      while(opcoes.size < 4) {
+        let r = lista[Math.floor(Math.random()*lista.length)];
+        let txt = r[idiomaOpcao] || (idiomaOpcao === "en" ? r.en : r.pt);
+        if(txt) opcoes.add(txt);
+      }
+      Array.from(opcoes).sort(() => Math.random()-0.5).forEach(txt => {
         const btn = document.createElement("button");
-        btn.textContent = opcao;
-        btn.onclick = () => verificarResposta(opcao, palavraAtual.correta);
+        btn.textContent = txt;
+        btn.onclick = () => verificarResposta(txt);
         container.appendChild(btn);
       });
     }
 
-    function gerarInputManual(isNivel6 = false) {
-      document.getElementById("options").style.display = "none";
-      document.getElementById("answerBox")?.remove();
-
-      const correta = isNivel6 ? palavraAtual.resposta : palavraAtual.esperada;
-
-      const box = document.createElement("div");
-      box.id = "answerBox";
-      box.innerHTML = `
-        <input type="text" id="respostaInput" placeholder="Digite a resposta..." style="padding: 10px; font-size: 1rem; width: 90%; max-width: 250px; margin-top: 10px;">
-        <br>
-        <button onclick="verificarRespostaDigitada('${correta}')">Verificar</button>
-      `;
-      document.querySelector(".game-box").appendChild(box);
-    }
-
-    function verificarRespostaDigitada(correta) {
-      const resposta = document.getElementById("respostaInput").value.trim();
-      verificarResposta(resposta, correta);
-    }
-
-   function verificarResposta(resposta, corretaManual = null) {
-  const correta = corretaManual || palavraAtual.esperada;
-  const isCorreta = resposta.toLowerCase().trim() === correta.toLowerCase().trim();
-
-  const feedback = document.getElementById("feedback");
-
-  if (isCorreta) {
-    somAcerto.play();
-    pontuacao++;
-    acertosNivel.push(palavraAtual);
-    feedback.textContent = "✅ Correto!";
-    feedback.style.color = "green";
-
-    document.body.classList.add("flash-correct");
-    setTimeout(() => document.body.classList.remove("flash-correct"), 500);
-  } else {
-    somErro.play();
-    vidas--;
-    errosNivel.push(palavraAtual);
-    feedback.textContent = `❌ Errado! Resposta correta: ${correta}`;
-    feedback.style.color = "red";
-
-    document.body.classList.add("flash-error");
-    document.querySelector(".game-box").classList.add("shake");
-    setTimeout(() => {
-      document.body.classList.remove("flash-error");
-      document.querySelector(".game-box").classList.remove("shake");
-    }, 500);
-  }
-
-  document.getElementById("score").textContent = `Pontuação: ${pontuacao}`;
-  atualizarVidas();
-  atualizarNivel();
-
-  if (vidas <= 0) {
-    setTimeout(mostrarGameOver, 1500);
-  } else {
-    const totalNivel = niveis[nivel].length;
-    const respondidas = acertosNivel.length + errosNivel.length;
-
-    if (respondidas >= totalNivel) {
-      setTimeout(mostrarResumoNivel, 1000); // Mostra resumo com delay para o usuário ver o feedback
-    } else {
-      setTimeout(novaPalavra, 1000); // Carrega a próxima palavra com delay
-    }
-  }
-}
-  function mostrarGameOver() {
-  const container = document.querySelector(".game-box");
-  container.innerHTML = `
-    <div class="fade-in">
-      <h2>💀 Game Over</h2>
-      <p>Você perdeu todas as vidas!</p>
-      <p>Sua pontuação final foi: <strong>${pontuacao}</strong></p>
-      <button id="btn-jogar-novamente">🔁 Jogar Novamente</button>
-    </div>
-  `;
-
-  // Registra o evento de clique no botão após ele existir no DOM
-  document.getElementById("btn-jogar-novamente").addEventListener("click", () => {
-    resetarJogo();
-  });
-}
-  function resetarJogo() {
-  pontuacao = 0;
-  nivel = 1;
-  vidas = 3;
-  localStorage.setItem("pontuacao", pontuacao);
-  localStorage.setItem("nivel", nivel);
-  localStorage.setItem("vidas", vidas);
-  acertosNivel = [];
-  errosNivel = [];
-  palavrasRestantes = [];
-
-  iniciarInterfaceDoJogo();
-  atualizarVidas();
-  atualizarNivel();
-  document.getElementById("score").textContent = `Pontuação: ${pontuacao}`;
-  novaPalavra();
-}
-
-function mostrarResumoNivel() {
-  somVitoria.play(); // ✅ toca som de vitória ao abrir o resumo
-
-  const container = document.querySelector(".game-box");
-  container.innerHTML = `<div class="fade-in"><h2>📊 Resumo do Nível ${nivel}</h2>`;
-
-  const acertosHTML = acertosNivel.map(p =>
-    `<li>✔️ ${p.pt || p.pergunta || p.dialogo} → <strong>${p.en || p.resposta || p.correta}</strong></li>`
-  ).join("");
-
-  const errosHTML = errosNivel.map(p =>
-    `<li>❌ ${p.pt || p.pergunta || p.dialogo} → <strong>Correto: ${p.en || p.resposta || p.correta}</strong></li>`
-  ).join("");
-
-  container.innerHTML += `
-    <h3>✅ Acertos:</h3>
-    <ul style="text-align: left; font-size: 0.95rem;">${acertosHTML || "<li>Nenhum acerto.</li>"}</ul>
-
-    <h3>❌ Erros:</h3>
-    <ul style="text-align: left; font-size: 0.95rem;">${errosHTML || "<li>Nenhum erro.</li>"}</ul>
-
-    <button onclick="abrirMenuNiveis()">📚 Menu de Níveis</button>
-    <button onclick="repetirNivel()">🔁 Repetir este Nível</button>
-    ${nivel < 10 ? `<button onclick="avancarNivel()">⏭️ Próximo Nível</button>` : ""}
-  </div>`;
-}
-  function avancarNivel() {
-  if (nivel < 10) {
-    nivel++;
-    localStorage.setItem("nivel", nivel);
-    acertosNivel = [];
-    errosNivel = [];
-    palavrasRestantes = [];
-
-    const container = document.querySelector(".game-box");
-
-    // Mostra mensagem de carregamento
-    container.innerHTML = `
-      <div class="fade-in">
-        <h2>⏳ Carregando Nível ${nivel}...</h2>
-      </div>
-    `;
-
-    // Espera 5 segundos e inicia diretamente o novo nível (sem voltar ao resumo)
-    setTimeout(() => {
-      iniciarInterfaceDoJogo();
-      atualizarNivel();
-      atualizarVidas();
-      novaPalavra();
-    }, 5000);
-  }
-}
-
-function abrirMenuNiveis() {
-  const container = document.querySelector(".game-box");
-  container.innerHTML = `<h2>🗺️ Mapa de Níveis</h2>`;
-
-  let html = "<div style='display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;'>";
-
-  for (let i = 1; i <= 10; i++) {
-    let label = "";
-    let disabled = true;
-
-    if (i < nivel) {
-      label = `✅ Nível ${i}`;      // níveis já concluídos
-      disabled = true;             // bloqueados para clique (pode liberar se quiser)
-    } else if (i === nivel) {
-      label = `🟢 Nível ${i}`;      // nível atual
-      disabled = false;
-    } else if (i === nivel + 1) {
-      label = `🟡 Nível ${i}`;      // próximo nível desbloqueado
-      disabled = false;
-    } else {
-      label = `🔒 Nível ${i}`;      // níveis bloqueados
-      disabled = true;
-    }
-
-    html += `<button ${disabled ? "disabled style='opacity:0.3; cursor:not-allowed;'" : ""} onclick="irParaNivel(${i})">
-      ${label}
-    </button>`;
-  }
-
-  html += "</div>";
-  container.innerHTML += html + `<br><button onclick="voltarParaResumo()">⬅️ Voltar ao Resumo</button>`;
-}
-
-function voltarAoJogo() {
-  mostrarResumoNivel();
-}
-
-function irParaNivel(num) {
-  nivel = num;
-  localStorage.setItem("nivel", nivel);
-  if (nivel > nivelConcluido) {
-    nivelConcluido = nivel;
-    localStorage.setItem("nivelConcluido", nivelConcluido);
-  }
-  acertosNivel = [];
-  errosNivel = [];
-  palavrasRestantes = [];
-
-  iniciarInterfaceDoJogo();
-  atualizarNivel();
-  atualizarVidas();
-  novaPalavra();
-}
-
-  window.onload = () => {
-  pontuacao = parseInt(localStorage.getItem("pontuacao")) || 0;
-  nivel = parseInt(localStorage.getItem("nivel")) || 1;
-  nivelConcluido = parseInt(localStorage.getItem("nivelConcluido")) || nivel;
-
-  document.getElementById("score").textContent = `Pontuação: ${pontuacao}`;
-  atualizarNivel();
-  atualizarVidas();
-  novaPalavra();
-};
-
-  function repetirNivel() {
-  acertosNivel = [];
-  errosNivel = [];
-  palavrasRestantes = [];
-
-  const container = document.querySelector(".game-box");
-  container.innerHTML = `
-    <div class="fade-in">
-      <h2>🔁 Reiniciando Nível ${nivel}...</h2>
-    </div>
-  `;
-
-  // Espera um pouco para mostrar a animação e volta ao nível
-  setTimeout(() => {
-    iniciarInterfaceDoJogo();
-    atualizarNivel();
-    atualizarVidas();
-    novaPalavra();
-  }, 2000); // espera 2 segundos para feedback visual
-}
-
-function iniciarInterfaceDoJogo() {
-  const container = document.querySelector(".game-box");
-  container.innerHTML = `
-    <div class="vidas" id="vidas">Vidas: ❤️❤️❤️</div>
-    <p id="instrucoes">Traduza de <strong>Português</strong> para <strong>Inglês</strong>:</p>
-    <div class="palavra-container" id="palavraContainer">
-      <h2 id="word">...</h2>
-      <button class="btn-ouvir" onclick="falarPalavra()">🔊 Ouvir</button>
-    </div>
-    <div class="options" id="options"></div>
-    <div class="feedback" id="feedback"></div>
-    <div class="score" id="score">Pontuação: ${pontuacao}</div>
-    <div class="level" id="level">Nível: ${nivel}</div>
-    <button onclick="resetarJogo()">🔄 Resetar Jogo</button>
-  `;
-}
-
-function voltarParaResumo() {
-  mostrarResumoNivel();
-}
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(reg => {
-        console.log('Service Worker registrado com sucesso:', reg);
-      })
-      .catch(err => {
-        console.log('Falha ao registrar Service Worker:', err);
+    function gerarDialogoOpcoes() {
+      const container = document.getElementById("optionsContainer");
+      const extras = ["I don't know.", "See you later.", "Nice to meet you."];
+      let opcoes = [palavraAtual.correta, ...extras].sort(() => Math.random() - 0.5);
+      opcoes.forEach(txt => {
+        const btn = document.createElement("button"); btn.textContent = txt;
+        btn.onclick = () => verificarResposta(txt);
+        container.appendChild(btn);
       });
-  });
-}
+    }
 
+    function gerarInputManual() {
+      const container = document.getElementById("optionsContainer");
+      container.innerHTML = `<input type="text" id="respostaInput" placeholder="Digite aqui..."><br>
+                             <button onclick="verificarResposta(document.getElementById('respostaInput').value)">Verificar</button>`;
+    }
+
+    function verificarResposta(resposta) {
+      if(!resposta) return;
+      const correta = palavraAtual.esperada;
+      const isCorreta = resposta.toLowerCase().trim() === correta.toLowerCase().trim();
+      const questaoTexto = palavraAtual.pt || palavraAtual.dialogo || palavraAtual.pergunta;
+
+      if (isCorreta) {
+        moedas += 1; pontuacao += 10;
+        document.getElementById("feedbackDisplay").textContent = "✅ Correto!";
+        document.getElementById("feedbackDisplay").style.color = "#2ecc71";
+        historicoNivel.push({ q: questaoTexto.substring(0,20) + "...", r: correta, status: "✅" });
+      } else {
+        vidas--;
+        document.getElementById("feedbackDisplay").textContent = `❌ Errado! Era: ${correta}`;
+        document.getElementById("feedbackDisplay").style.color = "#ff6b6b";
+        document.getElementById("gameBox").classList.add("shake");
+        historicoNivel.push({ q: questaoTexto.substring(0,20) + "...", r: correta, status: "❌" });
+        setTimeout(() => document.getElementById("gameBox").classList.remove("shake"), 400);
+      }
+
+      setTimeout(() => {
+        if (vidas <= 0) {
+          alert("Fim de Jogo no Nível " + nivel + "! Tente novamente.");
+          vidas = 3; palavrasRestantes = []; novaPalavra();
+        } else if (palavrasRestantes.length === 0) {
+          mostrarMenuFimNivel();
+        } else {
+          novaPalavra();
+        }
+      }, 1500);
+    }
+
+    function mostrarMenuFimNivel() {
+      const modal = document.getElementById("modalResultados");
+      const conteudo = document.getElementById("resumoConteudo");
+      const infoFaltam = document.getElementById("infoFaltam");
+      
+      conteudo.innerHTML = "<strong>Relatório de Desempenho:</strong><br><br>";
+      historicoNivel.forEach(item => {
+        conteudo.innerHTML += `${item.status} ${item.q} -> <b>${item.r}</b><br>`;
+      });
+
+      infoFaltam.innerHTML = `Nível ${nivel} Concluído!<br>Faltam ${10 - nivel} níveis para o final.`;
+      modal.style.display = "block";
+    }
+
+    function irParaProximoNivel() {
+      document.getElementById("modalResultados").style.display = "none";
+      nivel++;
+      if (nivel > 10) {
+        alert("PARABÉNS! VOCÊ COMPLETOU O JOGO!");
+        resetarJogo();
+      } else {
+        vidas = 3; 
+        palavrasRestantes = [];
+        novaPalavra();
+      }
+    }
+
+    function revelarResposta() {
+      if (moedas >= 3) {
+        moedas -= 3;
+        alert("A resposta correta é: " + palavraAtual.esperada);
+        atualizarInterface();
+      }
+    }
+
+    function falarPalavra() {
+      const txt = document.getElementById("wordDisplay").textContent;
+      window.speechSynthesis.speak(new SpeechSynthesisUtterance(txt));
+    }
+
+    function resetarJogo() {
+      localStorage.clear();
+      location.reload();
+    }
+
+    window.onload = novaPalavra;
   </script>
-
 </body>
 </html>
-
-
