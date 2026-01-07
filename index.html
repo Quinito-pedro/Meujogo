@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inglês Pro - Glass Edition</title>
+  <title>Inglês Pro - Versão Final</title>
   
 <style>
   body {
@@ -24,6 +24,20 @@
     100% { background-position: 0% 50%; }
   }
 
+  /* INDICADOR DE NÍVEL SUPERIOR */
+  .level-top-badge {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 195, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 195, 255, 0.5);
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: bold;
+    z-index: 999;
+  }
+
   .game-box {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(15px);
@@ -31,68 +45,88 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 20px;
     padding: 30px;
-    max-width: 420px;
-    margin: auto;
+    max-width: 450px;
+    margin: 60px auto 20px;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   }
 
-  /* MODAL DE RESULTADOS (MENU DE RESPOSTAS) */
-  #modalResultados {
+  /* MODAIS */
+  .modal {
     display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1000;
+    z-index: 2000;
     width: 90%;
     max-width: 400px;
-    background: rgba(15, 32, 39, 0.98);
+    background: rgba(15, 32, 45, 0.98);
     border: 2px solid #00c3ff;
     border-radius: 25px;
     padding: 25px;
-    box-shadow: 0 0 50px rgba(0,0,0,0.9);
+    box-shadow: 0 0 100px rgba(0,0,0,1);
   }
 
   .resumo-lista {
     text-align: left;
-    max-height: 250px;
+    max-height: 200px;
     overflow-y: auto;
     margin: 15px 0;
-    padding: 15px;
+    padding: 10px;
     background: rgba(255,255,255,0.05);
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 0.9rem;
-    line-height: 1.6;
   }
 
-  /* BOTÕES ORIGINAIS */
+  .grid-niveis {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .nivel-item {
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    font-weight: bold;
+  }
+
+  .nivel-completo { background: #2ecc71; border-color: #27ae60; }
+  .nivel-atual { border: 2px solid #00c3ff; background: rgba(0, 195, 255, 0.3); }
+
+  /* BOTÕES */
   button {
     padding: 12px;
-    font-size: 1rem;
     cursor: pointer;
     background-color: #00c3ff;
     color: white;
     margin: 8px;
     width: 100%;
-    max-width: 260px;
+    max-width: 280px;
     font-weight: bold;
     border: none;
     border-bottom: 4px solid #0099cc;
     border-radius: 12px;
-    transition: all 0.1s ease;
+    transition: 0.1s;
   }
 
   button:active { border-bottom: 0; transform: translateY(4px); }
-  
-  .btn-proximo { background-color: #2ecc71; border-bottom-color: #27ae60; margin-top: 15px; }
 
-  .btn-dica {
-    background: transparent !important; color: #ffc107 !important;
-    border: 2px dashed #ffc107 !important; border-bottom: 2px dashed #ffc107 !important;
+  .btn-proximo { background-color: #2ecc71; border-bottom-color: #27ae60; }
+
+  .btn-menu-niveis {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 3px solid rgba(255,255,255,0.3);
+    width: auto;
+    padding: 8px 20px;
+    font-size: 0.9rem;
   }
 
-  .moedas-container { color: #ffd700; font-weight: bold; margin-bottom: 10px; }
-  input[type="text"] { padding: 12px; width: 80%; border-radius: 10px; border: none; margin: 10px 0; text-align: center; font-size: 1rem; }
+  .moedas-container { color: #ffd700; font-weight: bold; font-size: 1.2rem; margin-bottom: 10px; }
+  input[type="text"] { padding: 12px; width: 85%; border-radius: 10px; border: none; margin: 10px 0; text-align: center; font-size: 1.1rem; }
   .feedback { margin-top: 10px; font-weight: bold; min-height: 1.5em; }
   
   .shake { animation: shake 0.4s; }
@@ -101,83 +135,95 @@
 </head>
 <body>
 
+  <div class="level-top-badge" id="levelBadge">NÍVEL 1</div>
+
   <h1>LEARN ENGLISH</h1>
   
-  <div id="mapaNiveis" style="margin-bottom: 20px; font-size: 1.2rem;"></div>
+  <div id="mapaNiveis" style="margin-bottom: 10px; font-size: 1.2rem;"></div>
   
   <div class="game-box" id="gameBox">
     <div class="moedas-container" id="moedasDisplay">🪙 Moedas: 5</div>
     <div class="vidas" id="vidasDisplay">❤️ ❤️ ❤️</div>
     
     <div class="palavra-container">
-      <h2 id="wordDisplay">...</h2>
-      <button style="width:auto; background:#ffc107; color:#333; border-bottom-color:#c79400;" onclick="falarPalavra()">🔊 Ouvir</button>
+      <h2 id="wordDisplay" style="white-space: pre-wrap; margin-bottom: 10px;">...</h2>
+      <button style="width:auto; background:#ffc107; color:#333; border-bottom-color:#c79400; padding: 6px 15px;" onclick="falarPalavra()">🔊 Ouvir Pronúncia</button>
     </div>
 
-    <div class="options" id="optionsContainer"></div>
+    <div id="optionsContainer" style="display: flex; flex-direction: column; align-items: center; margin-top: 15px;"></div>
     <div class="feedback" id="feedbackDisplay"></div>
     
-    <div class="score" id="scoreDisplay">Pontos: 0</div>
-    <div class="level" id="levelDisplay">Nível: 1</div>
+    <div style="margin: 15px 0;">
+        <div id="scoreDisplay" style="font-weight: bold;">Pontos: 0</div>
+        <button class="btn-menu-niveis" onclick="abrirMenuNiveis()">📊 MENU DE NÍVEIS</button>
+    </div>
 
-    <button class="btn-dica" id="btnDica" onclick="revelarResposta()">💡 Resposta Automática (3 🪙)</button>
+    <button style="background:transparent; color:#ffc107; border: 2px dashed #ffc107; border-bottom: 2px dashed #ffc107;" onclick="revelarResposta()">💡 Resposta Automática (3 🪙)</button>
     <br>
-    <button onclick="resetarJogo()" style="background:none; border:none; color:#ff6b6b; text-decoration:underline; font-size:0.8rem; cursor:pointer;">Reiniciar Tudo</button>
+    <button onclick="resetarJogo()" style="background:none; border:none; color:#ff6b6b; text-decoration:underline; font-size:0.8rem; cursor:pointer;">Reiniciar Todo o Jogo</button>
   </div>
 
-  <div id="modalResultados">
-    <h2 style="color: #2ecc71;">Nível Concluído!</h2>
+  <div id="modalFimNivel" class="modal">
+    <h2 style="color: #2ecc71;">Nível Concluído! 🏆</h2>
     <div class="resumo-lista" id="resumoConteudo"></div>
-    <p id="infoFaltam" style="font-weight: bold;"></p>
+    <p id="textoProgresso" style="font-weight: bold;"></p>
     <button class="btn-proximo" onclick="irParaProximoNivel()">Ir para o Próximo Nível ➔</button>
   </div>
 
+  <div id="modalMapa" class="modal">
+    <h2>Mapa de Níveis</h2>
+    <div class="grid-niveis" id="gridNiveis"></div>
+    <br>
+    <button onclick="fecharModais()">Fechar</button>
+  </div>
+
   <script>
-    // --- TODOS OS SEUS NÍVEIS ORIGINAIS ---
-    const nivel1 = [ { pt: "casa", en: "house" }, { pt: "gato", en: "cat" }, { pt: "livro", en: "book" }, { pt: "maçã", en: "apple" }, { pt: "carro", en: "car" }, { pt: "sol", en: "sun" }, { pt: "água", en: "water" }, { pt: "mesa", en: "table" }];
-    const nivel2 = [ { pt: "janela", en: "window" }, { pt: "cachorro", en: "dog" }, { pt: "telefone", en: "phone" }, { pt: "estrada", en: "road" }, { pt: "caneta", en: "pen" }, { pt: "verde", en: "green" }, { pt: "fruta", en: "fruit" }, { pt: "noite", en: "night" }];
-    const nivel3 = [ { pt: "conhecimento", en: "knowledge" }, { pt: "pensamento", en: "thought" }, { pt: "esperança", en: "hope" }, { pt: "desafio", en: "challenge" }, { pt: "compreensão", en: "understanding" }, { pt: "liberdade", en: "freedom" }, { pt: "decisão", en: "decision" }, { pt: "melhoria", en: "improvement" }];
-    const nivel5 = [
-      { dialogo: "A: Hi! How are you?\nB: _____", correta: "I'm fine, thank you." },
-      { dialogo: "A: What is your name?\nB: _____", correta: "My name is Anna." },
-      { dialogo: "A: Do you speak English?\nB: _____", correta: "Yes, a little." },
-      { dialogo: "A: Where are you from?\nB: _____", correta: "I'm from Brazil." }
-    ];
-    const nivel6 = [
-      { pergunta: "A: What time is it?\nB: _____", resposta: "It is three o'clock" },
-      { pergunta: "A: How old are you?\nB: _____", resposta: "I am 25 years old" },
-      { pergunta: "A: What do you do?\nB: _____", resposta: "I am a student" }
-    ];
-    const nivel7 = [{ pt: "trabalho", en: "work" }, { pt: "dinheiro", en: "money" }, { pt: "escola", en: "school" }, { pt: "alimento", en: "food" }, { pt: "amigo", en: "friend" }, { pt: "cidade", en: "city" }, { pt: "viagem", en: "travel" }, { pt: "cultura", en: "culture" }];
-    const nivel8 = [{ pt: "felicidade", en: "happiness" }, { pt: "tristeza", en: "sadness" }, { pt: "amor", en: "love" }, { pt: "medo", en: "fear" }, { pt: "coragem", en: "courage" }, { pt: "raiva", en: "anger" }, { pt: "paz", en: "peace" }, { pt: "respeito", en: "respect" }];
-    const nivel9 = [
-      { pergunta: "A: Can you help me?\nB: _____", resposta: "Yes, of course." },
-      { pergunta: "A: Where is the bank?\nB: _____", resposta: "It is on Main Street." },
-      { pergunta: "A: What is your favorite food?\nB: _____", resposta: "I love pizza." }
-    ];
-    const nivel10 = [
-      { dialogo: "A: What are you doing tomorrow?\nB: _____", correta: "I'm going to the beach." },
-      { dialogo: "A: Have you been to Paris?\nB: _____", correta: "Yes, once." },
-      { dialogo: "A: Do you like music?\nB: _____", correta: "Yes, very much." }
-    ];
+    // --- TODOS OS DADOS DOS 10 NÍVEIS ---
+    const n1 = [{pt:"casa", en:"house"}, {pt:"gato", en:"cat"}, {pt:"livro", en:"book"}, {pt:"maçã", en:"apple"}, {pt:"carro", en:"car"}];
+    const n2 = [{pt:"janela", en:"window"}, {pt:"cachorro", en:"dog"}, {pt:"estrada", en:"road"}, {pt:"caneta", en:"pen"}];
+    const n3 = [{pt:"conhecimento", en:"knowledge"}, {pt:"pensamento", en:"thought"}, {pt:"esperança", en:"hope"}];
+    const n5 = [{dialogo: "A: Hi! How are you?\nB: _____", correta: "I'm fine, thank you."}, {dialogo: "A: What is your name?\nB: _____", correta: "My name is Anna."}];
+    const n6 = [{pergunta: "A: What time is it?\nB: _____", resposta: "It is three o'clock"}, {pergunta: "A: How old are you?\nB: _____", resposta: "I am 25 years old"}];
+    const n7 = [{pt:"trabalho", en:"work"}, {pt:"escola", en:"school"}, {pt:"cidade", en:"city"}];
+    const n8 = [{pt:"felicidade", en:"happiness"}, {pt:"coragem", en:"courage"}, {pt:"paz", en:"peace"}];
+    const n9 = [{pergunta: "A: Can you help me?\nB: _____", resposta: "Yes, of course."}, {pergunta: "A: I love pizza.", resposta: "Me too"}];
+    const n10 = [{dialogo: "A: Have you been to Paris?\nB: _____", correta: "Yes, once."}];
 
-    const niveis = { 1: nivel1, 2: nivel2, 3: nivel3, 4: [...nivel1, ...nivel2], 5: nivel5, 6: nivel6, 7: nivel7, 8: nivel8, 9: nivel9, 10: nivel10 };
+    const niveisDB = { 1: n1, 2: n2, 3: n3, 4: [...n1, ...n2], 5: n5, 6: n6, 7: n7, 8: n8, 9: n9, 10: n10 };
 
-    // --- ESTADO DO JOGO ---
+    // --- ESTADO ---
     let moedas = parseInt(localStorage.getItem("moedas")) || 5;
     let nivel = parseInt(localStorage.getItem("nivel")) || 1;
     let pontuacao = parseInt(localStorage.getItem("pontuacao")) || 0;
     let vidas = 3;
     let palavrasRestantes = [];
     let palavraAtual;
-    let historicoNivel = []; 
+    let historicoNivel = [];
 
+    // --- ÁUDIO ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      if(tipo === 'acerto') { osc.frequency.value = 600; gain.gain.value = 0.1; }
+      else { osc.frequency.value = 200; gain.gain.value = 0.1; }
+      osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+    }
+
+    function falarPalavra() {
+      const txt = document.getElementById("wordDisplay").textContent;
+      const msg = new SpeechSynthesisUtterance(txt);
+      msg.lang = 'en-US';
+      window.speechSynthesis.speak(msg);
+    }
+
+    // --- LÓGICA ---
     function atualizarInterface() {
       document.getElementById("moedasDisplay").textContent = `🪙 Moedas: ${moedas}`;
       document.getElementById("scoreDisplay").textContent = `Pontos: ${pontuacao}`;
-      document.getElementById("levelDisplay").textContent = `Nível: ${nivel}`;
+      document.getElementById("levelBadge").textContent = `NÍVEL ${nivel}`;
       document.getElementById("vidasDisplay").textContent = "❤️ ".repeat(vidas) + "🤍 ".repeat(3-vidas);
-      document.getElementById("btnDica").disabled = (moedas < 3);
       
       const mapa = document.getElementById("mapaNiveis");
       mapa.innerHTML = Array.from({length: 10}, (_, i) => (i+1 === nivel ? "🟢" : (i+1 < nivel ? "✅" : "🔒"))).join(" ");
@@ -188,7 +234,7 @@
     }
 
     function novaPalavra() {
-      const lista = niveis[nivel] || nivel1;
+      const lista = niveisDB[nivel] || n1;
       if (palavrasRestantes.length === 0) {
         palavrasRestantes = [...lista];
         historicoNivel = [];
@@ -196,139 +242,98 @@
 
       palavraAtual = palavrasRestantes.splice(Math.floor(Math.random() * palavrasRestantes.length), 1)[0];
       document.getElementById("feedbackDisplay").textContent = "";
-      document.getElementById("optionsContainer").innerHTML = "";
-      document.getElementById("btnDica").style.display = "block";
-      
-      // LOGICA DOS NIVEIS ORIGINAIS
+      const container = document.getElementById("optionsContainer");
+      container.innerHTML = "";
+
       if (nivel === 5 || nivel === 10) {
         document.getElementById("wordDisplay").textContent = palavraAtual.dialogo;
         palavraAtual.esperada = palavraAtual.correta;
-        gerarDialogoOpcoes();
+        gerarOpcoesDialogo();
       } else if (nivel === 6 || nivel === 9) {
         document.getElementById("wordDisplay").textContent = palavraAtual.pergunta;
         palavraAtual.esperada = palavraAtual.resposta;
-        gerarInputManual();
+        container.innerHTML = `<input type="text" id="respostaInput" placeholder="Digite aqui..."><br><button onclick="verificarResposta(document.getElementById('respostaInput').value)">Verificar</button>`;
       } else {
-        let mostrar = (nivel === 2) ? "en" : "pt";
-        if (nivel === 3) mostrar = Math.random() > 0.5 ? "en" : "pt";
-        document.getElementById("wordDisplay").textContent = palavraAtual[mostrar] || palavraAtual.pt;
-        palavraAtual.esperada = (mostrar === "pt") ? palavraAtual.en : (palavraAtual.pt || palavraAtual.en);
-        
-        if (nivel === 4) gerarInputManual();
-        else gerarOpcoes(lista, (mostrar === "pt" ? "en" : "pt"));
+        document.getElementById("wordDisplay").textContent = palavraAtual.pt;
+        palavraAtual.esperada = palavraAtual.en;
+        gerarOpcoesMultiplas(lista);
       }
       atualizarInterface();
     }
 
-    function gerarOpcoes(lista, idiomaOpcao) {
-      const container = document.getElementById("optionsContainer");
-      let opcoes = new Set([palavraAtual.esperada]);
-      while(opcoes.size < 4) {
+    function gerarOpcoesMultiplas(lista) {
+      let ops = new Set([palavraAtual.esperada]);
+      while(ops.size < 4 && ops.size < 10) {
         let r = lista[Math.floor(Math.random()*lista.length)];
-        let txt = r[idiomaOpcao] || (idiomaOpcao === "en" ? r.en : r.pt);
-        if(txt) opcoes.add(txt);
+        if(r.en) ops.add(r.en);
       }
-      Array.from(opcoes).sort(() => Math.random()-0.5).forEach(txt => {
-        const btn = document.createElement("button");
-        btn.textContent = txt;
-        btn.onclick = () => verificarResposta(txt);
-        container.appendChild(btn);
+      Array.from(ops).sort(()=>Math.random()-0.5).forEach(t => {
+        const b = document.createElement("button"); b.textContent = t;
+        b.onclick = () => verificarResposta(t); document.getElementById("optionsContainer").appendChild(b);
       });
     }
 
-    function gerarDialogoOpcoes() {
-      const container = document.getElementById("optionsContainer");
-      const extras = ["I don't know.", "See you later.", "Nice to meet you."];
-      let opcoes = [palavraAtual.correta, ...extras].sort(() => Math.random() - 0.5);
-      opcoes.forEach(txt => {
-        const btn = document.createElement("button"); btn.textContent = txt;
-        btn.onclick = () => verificarResposta(txt);
-        container.appendChild(btn);
+    function gerarOpcoesDialogo() {
+      [palavraAtual.correta, "I don't know.", "Maybe.", "See you."].sort(()=>Math.random()-0.5).forEach(t => {
+        const b = document.createElement("button"); b.textContent = t;
+        b.onclick = () => verificarResposta(t); document.getElementById("optionsContainer").appendChild(b);
       });
     }
 
-    function gerarInputManual() {
-      const container = document.getElementById("optionsContainer");
-      container.innerHTML = `<input type="text" id="respostaInput" placeholder="Digite aqui..."><br>
-                             <button onclick="verificarResposta(document.getElementById('respostaInput').value)">Verificar</button>`;
-    }
-
-    function verificarResposta(resposta) {
-      if(!resposta) return;
-      const correta = palavraAtual.esperada;
-      const isCorreta = resposta.toLowerCase().trim() === correta.toLowerCase().trim();
-      const questaoTexto = palavraAtual.pt || palavraAtual.dialogo || palavraAtual.pergunta;
+    function verificarResposta(resp) {
+      if(!resp) return;
+      const isCorreta = resp.toLowerCase().trim() === palavraAtual.esperada.toLowerCase().trim();
+      const txtRelatorio = document.getElementById("wordDisplay").textContent.substring(0,15);
 
       if (isCorreta) {
-        moedas += 1; pontuacao += 10;
+        tocarSom('acerto'); moedas++; pontuacao += 10;
         document.getElementById("feedbackDisplay").textContent = "✅ Correto!";
         document.getElementById("feedbackDisplay").style.color = "#2ecc71";
-        historicoNivel.push({ q: questaoTexto.substring(0,20) + "...", r: correta, status: "✅" });
+        historicoNivel.push({ q: txtRelatorio, r: palavraAtual.esperada, s: "✅" });
       } else {
-        vidas--;
-        document.getElementById("feedbackDisplay").textContent = `❌ Errado! Era: ${correta}`;
+        tocarSom('erro'); vidas--;
+        document.getElementById("feedbackDisplay").textContent = "❌ Errado!";
         document.getElementById("feedbackDisplay").style.color = "#ff6b6b";
         document.getElementById("gameBox").classList.add("shake");
-        historicoNivel.push({ q: questaoTexto.substring(0,20) + "...", r: correta, status: "❌" });
+        historicoNivel.push({ q: txtRelatorio, r: palavraAtual.esperada, s: "❌" });
         setTimeout(() => document.getElementById("gameBox").classList.remove("shake"), 400);
       }
 
       setTimeout(() => {
-        if (vidas <= 0) {
-          alert("Fim de Jogo no Nível " + nivel + "! Tente novamente.");
-          vidas = 3; palavrasRestantes = []; novaPalavra();
-        } else if (palavrasRestantes.length === 0) {
-          mostrarMenuFimNivel();
-        } else {
-          novaPalavra();
-        }
-      }, 1500);
+        if (vidas <= 0) { alert("Vidas esgotadas! Reiniciando nível."); vidas = 3; palavrasRestantes = []; novaPalavra(); }
+        else if (palavrasRestantes.length === 0) { mostrarFimNivel(); }
+        else { novaPalavra(); }
+      }, 1200);
     }
 
-    function mostrarMenuFimNivel() {
-      const modal = document.getElementById("modalResultados");
-      const conteudo = document.getElementById("resumoConteudo");
-      const infoFaltam = document.getElementById("infoFaltam");
-      
-      conteudo.innerHTML = "<strong>Relatório de Desempenho:</strong><br><br>";
-      historicoNivel.forEach(item => {
-        conteudo.innerHTML += `${item.status} ${item.q} -> <b>${item.r}</b><br>`;
-      });
-
-      infoFaltam.innerHTML = `Nível ${nivel} Concluído!<br>Faltam ${10 - nivel} níveis para o final.`;
-      modal.style.display = "block";
+    function mostrarFimNivel() {
+      const res = document.getElementById("resumoConteudo");
+      res.innerHTML = "";
+      historicoNivel.forEach(i => res.innerHTML += `${i.s} ${i.q}... -> <b>${i.r}</b><br>`);
+      document.getElementById("textoProgresso").textContent = `Faltam ${10 - nivel} níveis para o fim!`;
+      document.getElementById("modalFimNivel").style.display = "block";
     }
 
     function irParaProximoNivel() {
-      document.getElementById("modalResultados").style.display = "none";
-      nivel++;
-      if (nivel > 10) {
-        alert("PARABÉNS! VOCÊ COMPLETOU O JOGO!");
-        resetarJogo();
-      } else {
-        vidas = 3; 
-        palavrasRestantes = [];
-        novaPalavra();
+      fecharModais(); nivel++;
+      if (nivel > 10) { alert("🏆 VOCÊ ZEROU O JOGO!"); resetarJogo(); }
+      else { vidas = 3; palavrasRestantes = []; novaPalavra(); }
+    }
+
+    function abrirMenuNiveis() {
+      const g = document.getElementById("gridNiveis"); g.innerHTML = "";
+      for (let i = 1; i <= 10; i++) {
+        let c = "nivel-item";
+        if (i < nivel) c += " nivel-completo";
+        else if (i === nivel) c += " nivel-atual";
+        g.innerHTML += `<div class="${c}">${i < nivel ? '✅' : i}</div>`;
       }
+      document.getElementById("modalMapa").style.display = "block";
     }
 
-    function revelarResposta() {
-      if (moedas >= 3) {
-        moedas -= 3;
-        alert("A resposta correta é: " + palavraAtual.esperada);
-        atualizarInterface();
-      }
-    }
-
-    function falarPalavra() {
-      const txt = document.getElementById("wordDisplay").textContent;
-      window.speechSynthesis.speak(new SpeechSynthesisUtterance(txt));
-    }
-
-    function resetarJogo() {
-      localStorage.clear();
-      location.reload();
-    }
+    function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+    function revelarResposta() { if(moedas >= 3){ moedas -= 3; alert("Resposta: " + palavraAtual.esperada); atualizarInterface(); } }
+    function resetarJogo() { localStorage.clear(); location.reload(); }
 
     window.onload = novaPalavra;
   </script>
