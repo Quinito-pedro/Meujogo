@@ -300,6 +300,9 @@
     .btn-proximo { background: var(--color-success); color: white; border-bottom: 4px solid #047857; }
     .btn-proximo:active { transform: translateY(4px); border-bottom-width: 0px; margin-bottom: 4px; }
 
+    .btn-tentar-novamente { background: var(--color-error); color: white; border-bottom: 4px solid #b91c1c; }
+    .btn-tentar-novamente:active { transform: translateY(4px); border-bottom-width: 0px; margin-bottom: 4px; }
+
     .grid-niveis {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -365,10 +368,10 @@
 
   <div id="modalFimNivel" class="modal-overlay">
     <div class="modal">
-      <h2 style="color: var(--color-success);">Nível Concluído! 🏆</h2>
+      <h2 id="tituloModal">Nível Concluído! 🏆</h2>
       <div class="resumo-lista" id="resumoConteudo"></div>
       <p id="textoProgresso" style="font-weight: 700; margin-bottom: 20px; color: var(--text-muted);"></p>
-      <button class="btn-proximo" onclick="irParaProximoNivel()">Avançar ➔</button>
+      <div id="modalAcaoContainer"></div>
     </div>
   </div>
 
@@ -381,7 +384,6 @@
   </div>
 
   <script>
-    // --- DATA STORE DOS NÍVEIS ---
     const n1 = [{pt:"casa", en:"house"}, {pt:"gato", en:"cat"}, {pt:"livro", en:"book"}, {pt:"maçã", en:"apple"}, {pt:"carro", en:"car"}];
     const n2 = [{pt:"janela", en:"window"}, {pt:"cachorro", en:"dog"}, {pt:"estrada", en:"road"}, {pt:"caneta", en:"pen"}];
     const n3 = [{pt:"conhecimento", en:"knowledge"}, {pt:"pensamento", en:"thought"}, {pt:"esperança", en:"hope"}];
@@ -402,6 +404,7 @@
     let palavrasRestantes = [];
     let palavraAtual;
     let historicoNivel = [];
+    let errosNoNivelAtual = 0; // Nova variável de controle de performance
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function tocarSom(tipo) {
@@ -447,6 +450,7 @@
       if (palavrasRestantes.length === 0) {
         palavrasRestantes = [...lista];
         historicoNivel = [];
+        errosNoNivelAtual = 0; // Reinicia o contador de erros ao iniciar um nível
       }
 
       palavraAtual = palavrasRestantes.splice(Math.floor(Math.random() * palavrasRestantes.length), 1)[0];
@@ -478,23 +482,17 @@
       atualizarInterface();
     }
 
-    // CORREÇÃO DO LOOP INFINITO: Garante o limite sem travar em listas pequenas
     function gerarOpcoesMultiplas(lista) {
       let ops = new Set([palavraAtual.esperada]);
-      
-      // Tenta puxar do nível atual primeiro
       let tentativas = 0;
       while(ops.size < 4 && tentativas < 30) {
         let r = lista[Math.floor(Math.random()*lista.length)];
         if(r && r.en) ops.add(r.en);
         tentativas++;
       }
-      
-      // Injeção de Segurança: Se faltar opção (ex: Nível 3 que só tem 3 palavras), puxa do Nível 1
       if(ops.size < 4) {
         n1.forEach(item => { if(ops.size < 4) ops.add(item.en); });
       }
-
       Array.from(ops).sort(()=>Math.random()-0.5).forEach(t => {
         const b = document.createElement("button"); b.textContent = t;
         b.onclick = () => verificarResposta(t); document.getElementById("optionsContainer").appendChild(b);
@@ -519,7 +517,7 @@
         document.getElementById("feedbackDisplay").style.color = "var(--color-success)";
         historicoNivel.push({ q: txtRelatorio, r: palavraAtual.esperada, s: "✅" });
       } else {
-        tocarSom('erro'); vidas--;
+        tocarSom('erro'); vidas--; errosNoNivelAtual++; // Computa o erro na rodada
         document.getElementById("feedbackDisplay").textContent = "❌ Resposta incorreta";
         document.getElementById("feedbackDisplay").style.color = "var(--color-error)";
         document.getElementById("gameBox").classList.add("shake");
@@ -530,12 +528,10 @@
       setTimeout(() => {
         if (vidas <= 0) { 
           alert("Vidas esgotadas! Reiniciando nível."); 
-          vidas = 3; 
-          palavrasRestantes = []; 
-          novaPalavra(); 
+          reiniciarNivelAtual();
         }
         else if (palavrasRestantes.length === 0) { 
-          mostrarFimNivel(); 
+          avaliarResultadoNivel(); 
         }
         else { 
           novaPalavra(); 
@@ -543,12 +539,42 @@
       }, 1200);
     }
 
-    function mostrarFimNivel() {
+    // Validação da nova condição: Só passa se os erros forem iguais a 0
+    function avaliarResultadoNivel() {
+      const titulo = document.getElementById("tituloModal");
+      const texto = document.getElementById("textoProgresso");
+      const containerBotao = document.getElementById("modalAcaoContainer");
       const res = document.getElementById("resumoConteudo");
+      
       res.innerHTML = "";
       historicoNivel.forEach(i => res.innerHTML += `<div>${i.s} <span>${i.q}...</span> -> <b>${i.r}</b></div>`);
-      document.getElementById("textoProgresso").textContent = nivel >= 10 ? "Você completou a jornada!" : `Faltam ${10 - nivel} níveis para concluir a liga!`;
+      containerBotao.innerHTML = "";
+
+      if (errosNoNivelAtual === 0) {
+        // GANHOU PERFEITO!
+        tocarSom('acerto');
+        moedas += 5; // Bônus extra por passar sem erros
+        titulo.textContent = "Aproveitamento Perfeito! 🏆";
+        titulo.style.color = "var(--color-success)";
+        texto.textContent = `Incrível! Você ganhou +5 moedas de bônus por não cometer erros!`;
+        containerBotao.innerHTML = `<button class="btn-proximo" onclick="irParaProximoNivel()">Avançar Nível ➔</button>`;
+      } else {
+        // FALHOU NA CONDIÇÃO DE 100%
+        titulo.textContent = "Nível Não Concluído 📑";
+        titulo.style.color = "var(--color-error)";
+        texto.textContent = `Para avançar, você precisa acertar TODAS as questões da rodada sem errar nenhuma. Tente novamente!`;
+        containerBotao.innerHTML = `<button class="btn-tentar-novamente" onclick="reiniciarNivelAtual()">Tentar Novamente ↻</button>`;
+      }
+      
       document.getElementById("modalFimNivel").style.display = "flex";
+      atualizarInterface();
+    }
+
+    function reiniciarNivelAtual() {
+      fecharModais();
+      vidas = 3;
+      palavrasRestantes = [];
+      novaPalavra();
     }
 
     function irParaProximoNivel() {
@@ -556,7 +582,7 @@
       nivel++; 
       
       if (nivel > 10) { 
-        alert("🏆 VOCÊ ZEROU O INGLÊS PRO!"); 
+        alert("🏆 PARABÉNS! VOCÊ COMPLETOU TODOS OS NÍVEIS COM PERFEIÇÃO!"); 
         resetarJogo(); 
       } else { 
         vidas = 3; 
@@ -579,7 +605,18 @@
     }
 
     function fecharModais() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
-    function revelarResposta() { if(moedas >= 3){ moedas -= 3; alert("Resposta: " + palavraAtual.esperada); atualizarInterface(); } else { alert("Moedas insuficientes!"); } }
+    
+    // Gastar moedas para salvar a rodada e economizar
+    function revelarResposta() { 
+      if(moedas >= 3){ 
+        moedas -= 3; 
+        alert("Dica Premium: A resposta correta é '" + palavraAtual.esperada + "'"); 
+        atualizarInterface(); 
+      } else { 
+        alert("Moedas insuficientes! Você precisa de 3 moedas."); 
+      } 
+    }
+    
     function resetarJogo() { localStorage.clear(); location.reload(); }
 
     window.onload = function() {
