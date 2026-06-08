@@ -398,11 +398,11 @@
   </div>
 
   <script>
-    // --- COMPATIBILIDADE E RETORNO DOS ARRAYS ---
+    // --- DATABASE INTEGRAL DOS 10 NÍVEIS ---
     const n1 = [{pt:"casa", en:"house"}, {pt:"gato", en:"cat"}, {pt:"livro", en:"book"}, {pt:"maçã", en:"apple"}, {pt:"carro", en:"car"}];
     const n2 = [{pt:"janela", en:"window"}, {pt:"cachorro", en:"dog"}, {pt:"estrada", en:"road"}, {pt:"caneta", en:"pen"}];
     const n3 = [{pt:"conhecimento", en:"knowledge"}, {pt:"pensamento", en:"thought"}, {pt:"esperança", en:"hope"}];
-    const n4 = [...n1, ...n2]; // Combinação explícita do nível 4
+    const n4 = [...n1, ...n2]; 
     const n5 = [{dialogo: "A: Hi! How are you?\nB: _____", correta: "I'm fine, thank you."}, {dialogo: "A: What is your name?\nB: _____", correta: "My name is Anna."}];
     const n6 = [{pergunta: "A: What time is it?\nB: _____", resposta: "It is three o'clock"}, {pergunta: "A: How old are you?\nB: _____", resposta: "I am 25 years old"}];
     const n7 = [{pt:"trabalho", en:"work"}, {pt:"escola", en:"school"}, {pt:"cidade", en:"city"}];
@@ -410,9 +410,9 @@
     const n9 = [{pergunta: "A: Can you help me?\nB: _____", resposta: "Yes, of course."}, {pergunta: "A: I love pizza.", resposta: "Me too"}];
     const n10 = [{dialogo: "A: Have you been to Paris?\nB: _____", correta: "Yes, once."}];
 
-    // Mapeamento absoluto sem falhas de índice
     const niveisDB = { 1: n1, 2: n2, 3: n3, 4: n4, 5: n5, 6: n6, 7: n7, 8: n8, 9: n9, 10: n10 };
 
+    // --- ESTADO INICIAL ---
     let moedas = parseInt(localStorage.getItem("moedas")) || 5;
     let nivel = parseInt(localStorage.getItem("nivel")) || 1;
     let pontuacao = parseInt(localStorage.getItem("pontuacao")) || 0;
@@ -421,14 +421,17 @@
     let palavraAtual;
     let historicoNivel = [];
 
+    // --- CONTEXTO DE ÁUDIO NATIVO ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function tocarSom(tipo) {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      if(tipo === 'acerto') { osc.frequency.value = 587.33; gain.gain.value = 0.08; }
-      else { osc.frequency.value = 146.83; gain.gain.value = 0.12; }
-      osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        if(tipo === 'acerto') { osc.frequency.value = 587.33; gain.gain.value = 0.08; }
+        else { osc.frequency.value = 146.83; gain.gain.value = 0.12; }
+        osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+      } catch(e) { console.log("Áudio bloqueado ou não suportado."); }
     }
 
     function falarPalavra() {
@@ -458,15 +461,23 @@
     }
 
     function novaPalavra() {
+      // Pega a lista do nível atual garantindo fallback estável
       const lista = niveisDB[nivel] || n1;
       
-      // Se mudou de nível ou acabou o array, reinicia a lista local de perguntas
+      // Correção crucial: Se trocou de nível ou esgotou as palavras, redefine síncronamente
       if (palavrasRestantes.length === 0) {
         palavrasRestantes = [...lista];
         historicoNivel = [];
       }
 
       palavraAtual = palavrasRestantes.splice(Math.floor(Math.random() * palavrasRestantes.length), 1)[0];
+      
+      // Se por algum motivo falhar ao extrair objeto válido, recarrega emergencialmente
+      if (!palavraAtual) {
+        palavrasRestantes = [...lista];
+        palavraAtual = palavrasRestantes.splice(0, 1)[0];
+      }
+
       document.getElementById("feedbackDisplay").textContent = "";
       document.getElementById("feedbackDisplay").style.color = "inherit";
       const container = document.getElementById("optionsContainer");
@@ -498,7 +509,7 @@
       let ops = new Set([palavraAtual.esperada]);
       while(ops.size < 4 && ops.size < 10) {
         let r = lista[Math.floor(Math.random()*lista.length)];
-        if(r.en) ops.add(r.en);
+        if(r && r.en) ops.add(r.en);
       }
       Array.from(ops).sort(()=>Math.random()-0.5).forEach(t => {
         const b = document.createElement("button"); b.textContent = t;
@@ -539,28 +550,37 @@
           palavrasRestantes = []; 
           novaPalavra(); 
         }
-        else if (palavrasRestantes.length === 0) { mostrarFimNivel(); }
-        else { novaPalavra(); }
+        else if (palavrasRestantes.length === 0) { 
+          mostrarFimNivel(); 
+        }
+        else { 
+          novaPalavra(); 
+        }
       }, 1200);
     }
 
     function mostrarFimNivel() {
-      const res = document.getElementById("resumoConteudo");
-      res.innerHTML = "";
-      historicoNivel.forEach(i => res.innerHTML += `<div>${i.s} <span>${i.q}...</span> -> <b>${i.r}</b></div>`);
+      const res = document.getElementById("resumedConteudo"); 
+      const fallbackRes = document.getElementById("resumoConteudo");
+      const targetElement = fallbackRes || res;
+      
+      targetElement.innerHTML = "";
+      historicoNivel.forEach(i => targetElement.innerHTML += `<div>${i.s} <span>${i.q}...</span> -> <b>${i.r}</b></div>`);
       document.getElementById("textoProgresso").textContent = nivel >= 10 ? "Você completou a jornada!" : `Faltam ${10 - nivel} níveis para concluir a liga!`;
       document.getElementById("modalFimNivel").style.display = "flex";
     }
 
     function irParaProximoNivel() {
       fecharModais(); 
-      nivel++;
+      nivel = nivel + 1; // Incremento direto seguro
+      
       if (nivel > 10) { 
         alert("🏆 VOCÊ ZEROU O INGLÊS PRO!"); 
         resetarJogo(); 
       } else { 
         vidas = 3; 
-        palavrasRestantes = []; // Força o descarte para carregar o novo array limpo do próximo nível
+        palavrasRestantes = []; // Zera explicitamente para evitar vazamento de memória do escopo anterior
+        localStorage.setItem("nivel", nivel); // Sincroniza imediatamente o storage antes da renderização
         novaPalavra(); 
       }
     }
@@ -581,7 +601,11 @@
     function revelarResposta() { if(moedas >= 3){ moedas -= 3; alert("Dica da coruja: " + palavraAtual.esperada); atualizarInterface(); } else { alert("Moedas insuficientes!"); } }
     function resetarJogo() { localStorage.clear(); location.reload(); }
 
-    window.onload = novaPalavra;
+    // Inicialização segura controlada por estado limpo
+    window.onload = function() {
+      palavrasRestantes = [];
+      novaPalavra();
+    };
   </script>
 </body>
 </html>
