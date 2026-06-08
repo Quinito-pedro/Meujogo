@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Inglês Pro - Premium EdTech</title>
   
+  <!-- Importação de Fonte Moderna e Arredondada -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap" rel="family">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 
   <style>
     /* RESET & VARIÁVEIS DE DESIGN SYSTEM */
@@ -17,7 +18,7 @@
       --color-primary: #3b82f6;  /* Azul Duolingo/Brand */
       --color-success: #10b981;  /* Verde Esmeralda (Acertos) */
       --color-error: #ef4444;    /* Vermelho Coral (Erros) */
-      --color-warn: #f59e0b;     /* Doutado Ouro (Recompensas/Moedas) */
+      --color-warn: #f59e0b;     /* Dourado Ouro (Recompensas/Moedas) */
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --font-rounded: 'Nunito', sans-serif;
@@ -337,14 +338,17 @@
   <div class="app-container">
     <h1 class="brand-title">Inglês Pro</h1>
 
+    <!-- BARRA DE STATUS SUPERIOR -->
     <div class="status-bar">
       <div class="status-item badge-level" id="levelBadge">NÍVEL 1</div>
       <div class="status-item badge-moedas" id="moedasDisplay">🪙 5</div>
       <div class="status-item badge-vidas" id="vidasDisplay">❤️❤️❤️</div>
     </div>
 
+    <!-- TRILHA DE APRENDIZADO / BARRA PROGRESSO -->
     <div class="learning-track" id="mapaNiveis"></div>
     
+    <!-- CARD PRINCIPAL DO GAME -->
     <div class="game-box" id="gameBox">
       
       <div class="palavra-container">
@@ -352,10 +356,13 @@
         <button class="btn-audio" onclick="falarPalavra()">🔊 Ouvir Pronúncia</button>
       </div>
 
+      <!-- CONTAINER PARA ENTRADAS DINÂMICAS -->
       <div id="optionsContainer"></div>
       
+      <!-- ESPAÇO DE FEEDBACK -->
       <div class="feedback" id="feedbackDisplay"></div>
       
+      <!-- RECURSOS ADICIONAIS & NAVEGAÇÃO -->
       <div class="footer-actions">
           <button class="btn-utility" onclick="revelarResposta()">💡 Dica (3 🪙)</button>
           <button class="btn-menu-niveis" onclick="abrirMenuNiveis()">📊 Trilha</button>
@@ -371,6 +378,7 @@
     </div>
   </div>
 
+  <!-- MODAL: FIM DE NÍVEL -->
   <div id="modalFimNivel" class="modal-overlay">
     <div class="modal">
       <h2 style="color: var(--color-success);">Nível Concluído! 🏆</h2>
@@ -380,6 +388,7 @@
     </div>
   </div>
 
+  <!-- MODAL: MAPA DE NÍVEIS -->
   <div id="modalMapa" class="modal-overlay">
     <div class="modal">
       <h2>Mapa de Níveis</h2>
@@ -389,11 +398,11 @@
   </div>
 
   <script>
-    // --- PRESERVAÇÃO INTEGRAL DO MOTOR JAVASCRIPT ORIGINAL ---
+    // --- COMPATIBILIDADE E RETORNO DOS ARRAYS ---
     const n1 = [{pt:"casa", en:"house"}, {pt:"gato", en:"cat"}, {pt:"livro", en:"book"}, {pt:"maçã", en:"apple"}, {pt:"carro", en:"car"}];
     const n2 = [{pt:"janela", en:"window"}, {pt:"cachorro", en:"dog"}, {pt:"estrada", en:"road"}, {pt:"caneta", en:"pen"}];
     const n3 = [{pt:"conhecimento", en:"knowledge"}, {pt:"pensamento", en:"thought"}, {pt:"esperança", en:"hope"}];
-    const n4 = [...n1, ...n2];
+    const n4 = [...n1, ...n2]; // Combinação explícita do nível 4
     const n5 = [{dialogo: "A: Hi! How are you?\nB: _____", correta: "I'm fine, thank you."}, {dialogo: "A: What is your name?\nB: _____", correta: "My name is Anna."}];
     const n6 = [{pergunta: "A: What time is it?\nB: _____", resposta: "It is three o'clock"}, {pergunta: "A: How old are you?\nB: _____", resposta: "I am 25 years old"}];
     const n7 = [{pt:"trabalho", en:"work"}, {pt:"escola", en:"school"}, {pt:"cidade", en:"city"}];
@@ -401,6 +410,7 @@
     const n9 = [{pergunta: "A: Can you help me?\nB: _____", resposta: "Yes, of course."}, {pergunta: "A: I love pizza.", resposta: "Me too"}];
     const n10 = [{dialogo: "A: Have you been to Paris?\nB: _____", correta: "Yes, once."}];
 
+    // Mapeamento absoluto sem falhas de índice
     const niveisDB = { 1: n1, 2: n2, 3: n3, 4: n4, 5: n5, 6: n6, 7: n7, 8: n8, 9: n9, 10: n10 };
 
     let moedas = parseInt(localStorage.getItem("moedas")) || 5;
@@ -416,8 +426,8 @@
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.connect(gain); gain.connect(audioCtx.destination);
-      if(tipo === 'acerto') { osc.frequency.value = 587.33; gain.gain.value = 0.08; } // D5 note crisp
-      else { osc.frequency.value = 146.83; gain.gain.value = 0.12; } // D3 note flat
+      if(tipo === 'acerto') { osc.frequency.value = 587.33; gain.gain.value = 0.08; }
+      else { osc.frequency.value = 146.83; gain.gain.value = 0.12; }
       osc.start(); osc.stop(audioCtx.currentTime + 0.15);
     }
 
@@ -434,7 +444,6 @@
       document.getElementById("levelBadge").textContent = `NÍVEL ${nivel}`;
       document.getElementById("vidasDisplay").textContent = "❤️".repeat(vidas) + "🤍".repeat(3-vidas);
       
-      // Renderização Premium da barra de progresso horizontal
       const mapa = document.getElementById("mapaNiveis");
       mapa.innerHTML = Array.from({length: 10}, (_, i) => {
         let classe = 'track-step';
@@ -450,6 +459,8 @@
 
     function novaPalavra() {
       const lista = niveisDB[nivel] || n1;
+      
+      // Se mudou de nível ou acabou o array, reinicia a lista local de perguntas
       if (palavrasRestantes.length === 0) {
         palavrasRestantes = [...lista];
         historicoNivel = [];
@@ -472,7 +483,6 @@
           <input type="text" id="respostaInput" placeholder="Escreva a resposta em inglês..." autocomplete="off">
           <button class="btn-verificar" onclick="verificarResposta(document.getElementById('respostaInput').value)">Verificar Resposta</button>
         `;
-        // Enviar com a tecla Enter nativa do celular
         document.getElementById('respostaInput').addEventListener('keypress', function(e) {
           if (e.key === 'Enter') verificarResposta(this.value);
         });
@@ -543,9 +553,16 @@
     }
 
     function irParaProximoNivel() {
-      fecharModais(); nivel++;
-      if (nivel > 10) { alert("🏆 VOCÊ ZEROU O INGLÊS PRO!"); resetarJogo(); }
-      else { vidas = 3; palavrasRestantes = []; novaPalavra(); }
+      fecharModais(); 
+      nivel++;
+      if (nivel > 10) { 
+        alert("🏆 VOCÊ ZEROU O INGLÊS PRO!"); 
+        resetarJogo(); 
+      } else { 
+        vidas = 3; 
+        palavrasRestantes = []; // Força o descarte para carregar o novo array limpo do próximo nível
+        novaPalavra(); 
+      }
     }
 
     function abrirMenuNiveis() {
