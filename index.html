@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Inglês Pro - Premium EdTech</title>
   
-  <!-- Importação de Fonte Moderna e Arredondada -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -13,12 +12,12 @@
   <style>
     /* RESET & VARIÁVEIS DE DESIGN SYSTEM */
     :root {
-      --bg-main: #0f172a;       /* Azul escuro fosco premium */
-      --bg-card: #1e293b;       /* Card flutuante */
-      --color-primary: #3b82f6;  /* Azul Duolingo/Brand */
-      --color-success: #10b981;  /* Verde Esmeralda (Acertos) */
-      --color-error: #ef4444;    /* Vermelho Coral (Erros) */
-      --color-warn: #f59e0b;     /* Dourado Ouro (Recompensas/Moedas) */
+      --bg-main: #0f172a;       
+      --bg-card: #1e293b;       
+      --color-primary: #3b82f6;  
+      --color-success: #10b981;  
+      --color-error: #ef4444;    
+      --color-warn: #f59e0b;     
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --font-rounded: 'Nunito', sans-serif;
@@ -44,7 +43,6 @@
       overflow-x: hidden;
     }
 
-    /* CONTAINER RESPONSIVO (ESTILO MOBILE NATIVO) */
     .app-container {
       width: 100%;
       max-width: 480px;
@@ -144,9 +142,9 @@
       color: var(--text-main);
       margin-bottom: 12px;
       line-height: 1.4;
+      white-space: pre-wrap;
     }
 
-    /* BOTÕES COM EFEITO 3D COGNITIVO */
     button {
       font-family: var(--font-rounded);
       font-weight: 700;
@@ -173,7 +171,6 @@
     }
     .btn-audio:active { transform: translateY(3px); border-bottom-width: 0px; margin-bottom: 3px; }
 
-    /* OPÇÕES DE RESPOSTA MÚLTIPLA */
     #optionsContainer {
       display: flex;
       flex-direction: column;
@@ -191,7 +188,6 @@
     #optionsContainer button:hover { background: #475569; }
     #optionsContainer button:active { transform: translateY(4px); border-bottom-width: 0px; margin-bottom: 4px; }
 
-    /* INPUT DE TEXTO MANUAL */
     input[type="text"] {
       font-family: var(--font-rounded);
       width: 100%;
@@ -208,10 +204,9 @@
     }
     input[type="text"]:focus { border-color: var(--color-primary); }
 
-    .btn-verificar { background: var(--color-primary); color: white; border-bottom: 4px solid #1d4ed8; }
+    .btn-verificar { background: var(--color-primary); color: white; border-bottom: 4px solid #1d4ed8; margin-top: 10px; }
     .btn-verificar:active { transform: translateY(4px); border-bottom-width: 0px; margin-bottom: 4px; }
 
-    /* FEEDBACKS ANIMADOS */
     .feedback {
       font-size: 1.1rem;
       font-weight: 800;
@@ -259,7 +254,7 @@
     }
     .btn-reset:hover { color: var(--color-error); }
 
-    /* MODAIS COM BACKDROP BLUR PREMIUM */
+    /* MODAIS */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -305,7 +300,6 @@
     .btn-proximo { background: var(--color-success); color: white; border-bottom: 4px solid #047857; }
     .btn-proximo:active { transform: translateY(4px); border-bottom-width: 0px; margin-bottom: 4px; }
 
-    /* GRID MAPA DE NÍVEIS */
     .grid-niveis {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -328,7 +322,6 @@
     .nivel-completo { background: var(--color-success); border-color: #047857; color: white; }
     .nivel-atual { background: var(--color-primary); border-color: #1d4ed8; color: white; box-shadow: 0 0 12px rgba(59,130,246,0.5); }
 
-    /* FEEDBACK ANIMATIONS */
     .shake { animation: shake 0.4s ease-in-out; }
     @keyframes shake { 0%, 100% {transform: translateX(0);} 20%, 60% {transform: translateX(-6px);} 40%, 80% {transform: translateX(6px);} }
   </style>
@@ -338,31 +331,23 @@
   <div class="app-container">
     <h1 class="brand-title">Inglês Pro</h1>
 
-    <!-- BARRA DE STATUS SUPERIOR -->
     <div class="status-bar">
       <div class="status-item badge-level" id="levelBadge">NÍVEL 1</div>
       <div class="status-item badge-moedas" id="moedasDisplay">🪙 5</div>
       <div class="status-item badge-vidas" id="vidasDisplay">❤️❤️❤️</div>
     </div>
 
-    <!-- TRILHA DE APRENDIZADO / BARRA PROGRESSO -->
     <div class="learning-track" id="mapaNiveis"></div>
     
-    <!-- CARD PRINCIPAL DO GAME -->
     <div class="game-box" id="gameBox">
-      
       <div class="palavra-container">
         <h2 id="wordDisplay">...</h2>
         <button class="btn-audio" onclick="falarPalavra()">🔊 Ouvir Pronúncia</button>
       </div>
 
-      <!-- CONTAINER PARA ENTRADAS DINÂMICAS -->
       <div id="optionsContainer"></div>
-      
-      <!-- ESPAÇO DE FEEDBACK -->
       <div class="feedback" id="feedbackDisplay"></div>
       
-      <!-- RECURSOS ADICIONAIS & NAVEGAÇÃO -->
       <div class="footer-actions">
           <button class="btn-utility" onclick="revelarResposta()">💡 Dica (3 🪙)</button>
           <button class="btn-menu-niveis" onclick="abrirMenuNiveis()">📊 Trilha</button>
@@ -378,7 +363,6 @@
     </div>
   </div>
 
-  <!-- MODAL: FIM DE NÍVEL -->
   <div id="modalFimNivel" class="modal-overlay">
     <div class="modal">
       <h2 style="color: var(--color-success);">Nível Concluído! 🏆</h2>
@@ -388,7 +372,6 @@
     </div>
   </div>
 
-  <!-- MODAL: MAPA DE NÍVEIS -->
   <div id="modalMapa" class="modal-overlay">
     <div class="modal">
       <h2>Mapa de Níveis</h2>
@@ -398,7 +381,7 @@
   </div>
 
   <script>
-    // --- DATABASE INTEGRAL DOS 10 NÍVEIS ---
+    // --- DATA STORE DOS NÍVEIS ---
     const n1 = [{pt:"casa", en:"house"}, {pt:"gato", en:"cat"}, {pt:"livro", en:"book"}, {pt:"maçã", en:"apple"}, {pt:"carro", en:"car"}];
     const n2 = [{pt:"janela", en:"window"}, {pt:"cachorro", en:"dog"}, {pt:"estrada", en:"road"}, {pt:"caneta", en:"pen"}];
     const n3 = [{pt:"conhecimento", en:"knowledge"}, {pt:"pensamento", en:"thought"}, {pt:"esperança", en:"hope"}];
@@ -412,7 +395,6 @@
 
     const niveisDB = { 1: n1, 2: n2, 3: n3, 4: n4, 5: n5, 6: n6, 7: n7, 8: n8, 9: n9, 10: n10 };
 
-    // --- ESTADO INICIAL ---
     let moedas = parseInt(localStorage.getItem("moedas")) || 5;
     let nivel = parseInt(localStorage.getItem("nivel")) || 1;
     let pontuacao = parseInt(localStorage.getItem("pontuacao")) || 0;
@@ -421,7 +403,6 @@
     let palavraAtual;
     let historicoNivel = [];
 
-    // --- CONTEXTO DE ÁUDIO NATIVO ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function tocarSom(tipo) {
       try {
@@ -431,7 +412,7 @@
         if(tipo === 'acerto') { osc.frequency.value = 587.33; gain.gain.value = 0.08; }
         else { osc.frequency.value = 146.83; gain.gain.value = 0.12; }
         osc.start(); osc.stop(audioCtx.currentTime + 0.15);
-      } catch(e) { console.log("Áudio bloqueado ou não suportado."); }
+      } catch(e) {}
     }
 
     function falarPalavra() {
@@ -461,10 +442,8 @@
     }
 
     function novaPalavra() {
-      // Pega a lista do nível atual garantindo fallback estável
       const lista = niveisDB[nivel] || n1;
       
-      // Correção crucial: Se trocou de nível ou esgotou as palavras, redefine síncronamente
       if (palavrasRestantes.length === 0) {
         palavrasRestantes = [...lista];
         historicoNivel = [];
@@ -472,12 +451,6 @@
 
       palavraAtual = palavrasRestantes.splice(Math.floor(Math.random() * palavrasRestantes.length), 1)[0];
       
-      // Se por algum motivo falhar ao extrair objeto válido, recarrega emergencialmente
-      if (!palavraAtual) {
-        palavrasRestantes = [...lista];
-        palavraAtual = palavrasRestantes.splice(0, 1)[0];
-      }
-
       document.getElementById("feedbackDisplay").textContent = "";
       document.getElementById("feedbackDisplay").style.color = "inherit";
       const container = document.getElementById("optionsContainer");
@@ -505,12 +478,23 @@
       atualizarInterface();
     }
 
+    // CORREÇÃO DO LOOP INFINITO: Garante o limite sem travar em listas pequenas
     function gerarOpcoesMultiplas(lista) {
       let ops = new Set([palavraAtual.esperada]);
-      while(ops.size < 4 && ops.size < 10) {
+      
+      // Tenta puxar do nível atual primeiro
+      let tentativas = 0;
+      while(ops.size < 4 && tentativas < 30) {
         let r = lista[Math.floor(Math.random()*lista.length)];
         if(r && r.en) ops.add(r.en);
+        tentativas++;
       }
+      
+      // Injeção de Segurança: Se faltar opção (ex: Nível 3 que só tem 3 palavras), puxa do Nível 1
+      if(ops.size < 4) {
+        n1.forEach(item => { if(ops.size < 4) ops.add(item.en); });
+      }
+
       Array.from(ops).sort(()=>Math.random()-0.5).forEach(t => {
         const b = document.createElement("button"); b.textContent = t;
         b.onclick = () => verificarResposta(t); document.getElementById("optionsContainer").appendChild(b);
@@ -560,27 +544,24 @@
     }
 
     function mostrarFimNivel() {
-      const res = document.getElementById("resumedConteudo"); 
-      const fallbackRes = document.getElementById("resumoConteudo");
-      const targetElement = fallbackRes || res;
-      
-      targetElement.innerHTML = "";
-      historicoNivel.forEach(i => targetElement.innerHTML += `<div>${i.s} <span>${i.q}...</span> -> <b>${i.r}</b></div>`);
+      const res = document.getElementById("resumoConteudo");
+      res.innerHTML = "";
+      historicoNivel.forEach(i => res.innerHTML += `<div>${i.s} <span>${i.q}...</span> -> <b>${i.r}</b></div>`);
       document.getElementById("textoProgresso").textContent = nivel >= 10 ? "Você completou a jornada!" : `Faltam ${10 - nivel} níveis para concluir a liga!`;
       document.getElementById("modalFimNivel").style.display = "flex";
     }
 
     function irParaProximoNivel() {
       fecharModais(); 
-      nivel = nivel + 1; // Incremento direto seguro
+      nivel++; 
       
       if (nivel > 10) { 
         alert("🏆 VOCÊ ZEROU O INGLÊS PRO!"); 
         resetarJogo(); 
       } else { 
         vidas = 3; 
-        palavrasRestantes = []; // Zera explicitamente para evitar vazamento de memória do escopo anterior
-        localStorage.setItem("nivel", nivel); // Sincroniza imediatamente o storage antes da renderização
+        palavrasRestantes = []; 
+        localStorage.setItem("nivel", nivel); 
         novaPalavra(); 
       }
     }
@@ -598,10 +579,9 @@
     }
 
     function fecharModais() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
-    function revelarResposta() { if(moedas >= 3){ moedas -= 3; alert("Dica da coruja: " + palavraAtual.esperada); atualizarInterface(); } else { alert("Moedas insuficientes!"); } }
+    function revelarResposta() { if(moedas >= 3){ moedas -= 3; alert("Resposta: " + palavraAtual.esperada); atualizarInterface(); } else { alert("Moedas insuficientes!"); } }
     function resetarJogo() { localStorage.clear(); location.reload(); }
 
-    // Inicialização segura controlada por estado limpo
     window.onload = function() {
       palavrasRestantes = [];
       novaPalavra();
